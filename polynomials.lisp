@@ -19,3 +19,6 @@
            (cons term1 (add-poly (rest poly1) poly2)))
           ((< (findpower term1) (findpower term2))
            (cons term2 (add-poly poly1 (rest poly2)))))))
+
+;;sample recursive execution
+;;(add-poly `((3 3)(2 2)(1 1)) (add-poly `((1 5)) `((2 5))))
