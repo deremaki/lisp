@@ -41,6 +41,29 @@
     ))
     )
 )
+
+
+(defun diff-poly(poly)
+    (let ((power  (findpower  (car poly))) 
+          (factor (findfactor (car poly))))
+    (cond ((null (rest poly))   (list (list (* power factor) (- power 1))))
+    (T 
+    (cons (list (* power factor) (- power 1)) (diff-poly (rest poly))))
+    )
+    ))
+(defun integral-poly(poly)
+    (let ((power  (findpower  (car poly))) 
+          (factor (findfactor (car poly))))
+    (cond ((null (rest poly))   (list (list (/ factor (+ power 1) ) (+ power 1))))
+    (T 
+    (cons (list (/ factor (+ power 1)) (+ power 1)) (diff-poly (rest poly))))
+    )
+    ))
+
+(print (diff-poly '((4 -5)(-6 2)(3 1)(5 0))))
+
+(print (integral-poly '((7 6)(3 2)(1 0)(1 -1))))
+
 ;;(print (power-poly '((3 3)(2 2)(1 1)(4 4)) '(5 2)))
  
 ;(print (power-poly '((3 5)) '(1 2)))
