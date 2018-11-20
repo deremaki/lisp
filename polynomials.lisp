@@ -145,8 +145,8 @@
             )
     (T 
             ;(let ((tmp `(,@power))))e
-            `(cons (list (list (funcall #',fun-factor (,@power) (,@factor)) 
-                              (funcall #',fun-power  (,@power) (,@factor))))
+            `(cons  (list (funcall #',fun-factor (,@power) (,@factor)) 
+                              (funcall #',fun-power  (,@power) (,@factor)))
                    (int-diff ,rt r-factor ,fun-factor r-power ,fun-power)
                 ;  (print `(,@power))
               ;     `(if-let (,@rt) r-factor fun-factor r-power fun-power)
@@ -154,7 +154,6 @@
             )
     )
     ))
-  ;  `(,@factor)))
 
 (print   (int-diff ((4 6)(2 2)(8 8)) 
             r-factor 
@@ -162,12 +161,7 @@
             r-power
             (lambda (power factor) (+ power 1))
             ))
-;;(print (lcomp ((2 2)(5 5))))
 
-;(defun xd (poly)
-;(lcomp poly xd))
-
-;;(print (xd `((4 5))))
 
 (print (macroexpand-1 `(int-diff ((4 6)(2 2)(8 8)(1 1)(4 4)) 
             r-factor 
@@ -175,3 +169,24 @@
             r-power
             (lambda (power factor) (+ power 1))
             )))
+
+(defun integral-poly(poly)
+     (eval `(int-diff ,poly 
+            r-factor 
+            (lambda (power factor) (/ factor (+ power 1)))
+            r-power
+            (lambda (power factor) (+ power 1))
+            )))  
+            
+(defun diff-poly(poly)
+     (eval `(int-diff ,poly 
+            r-factor 
+            (lambda (power factor) (* factor power))
+            r-power
+            (lambda (power factor) (- power 1))
+            )))        
+            
+
+(print (diff-poly '((4 -5)(-6 2)(3 1)(5 0))))
+
+(print (integral-poly '((7 6)(3 4)(1 2)(1 1))))
