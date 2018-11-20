@@ -94,9 +94,16 @@
     )
     ))
 
+(defun calculate-poly(poly x)
+  (loop :with result = 0
+        :for i :from (1- (length poly)) :downto 0
+        :do (setf result (+ (findfactor (nth i poly)) (* result x)))
+        :finally (return result))
+  )
+
 (print (diff-poly '((4 -5)(-6 2)(3 1)(5 0))))
 
-(print (integral-poly '((7 6)(3 2)(1 0)(1 -1))))
+(print (integral-poly '((7 6)(3 4)(1 2)(1 1))))
 
 ;;(print (power-poly '((3 3)(2 2)(1 1)(4 4)) '(5 2)))
  
@@ -121,6 +128,7 @@
 ;(print (macroexpand-1 '(eight ((1 5)) ((2 5)))))
 
 
-;;samples of recursive execution
-;;(add-poly `((3 3)(2 2)(1 1)) (add-poly `((1 5)) `((2 5))))
-;;(add-poly `((3 3)(2 2)(1 1)) (subtract-poly `((1 5)) `((2 5)(-2 2))))(defun mul-poly(poly1 poly2)
+;samples of recursive execution
+;(add-poly `((3 3)(2 2)(1 1)) (add-poly `((1 5)) `((2 5))))
+;(add-poly `((3 3)(2 2)(1 1)) (subtract-poly `((1 5)) `((2 5)(-2 2))))(defun mul-poly(poly1 poly2)
+;(calculate-poly `((3 4)(8 2)(6 0)) 3)
