@@ -90,7 +90,7 @@
           (factor (findfactor (car poly))))
     (cond ((null (rest poly))   (list (list (/ factor (+ power 1) ) (+ power 1))))
     (T 
-    (cons (list (/ factor (+ power 1)) (+ power 1)) (diff-poly (rest poly))))
+    (cons (list (/ factor (+ power 1)) (+ power 1)) (integral-poly (rest poly))))
     )
     ))
 
