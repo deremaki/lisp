@@ -132,3 +132,46 @@
 ;(add-poly `((3 3)(2 2)(1 1)) (add-poly `((1 5)) `((2 5))))
 ;(add-poly `((3 3)(2 2)(1 1)) (subtract-poly `((1 5)) `((2 5)(-2 2))))(defun mul-poly(poly1 poly2)
 ;(calculate-poly `((3 4)(8 2)(6 0)) 3)
+
+
+
+(defmacro int-diff (poly r-factor fun-factor r-power fun-power)
+  (let ((power (findpower (car poly)))
+        (factor (findfactor (car poly)))
+        (rt (rest poly)))
+    (cond ((null (rest poly))   
+            `(list (list (funcall #',fun-factor (,@power) (,@factor)) 
+                              (funcall #',fun-power  (,@power) (,@factor))))
+            )
+    (T 
+            ;(let ((tmp `(,@power))))e
+            `(cons (list (list (funcall #',fun-factor (,@power) (,@factor)) 
+                              (funcall #',fun-power  (,@power) (,@factor))))
+                   (int-diff ,rt r-factor ,fun-factor r-power ,fun-power)
+                ;  (print `(,@power))
+              ;     `(if-let (,@rt) r-factor fun-factor r-power fun-power)
+                   )
+            )
+    )
+    ))
+  ;  `(,@factor)))
+
+(print   (int-diff ((4 6)(2 2)(8 8)) 
+            r-factor 
+            (lambda (power factor) (/ factor (+ power 1)))
+            r-power
+            (lambda (power factor) (+ power 1))
+            ))
+;;(print (lcomp ((2 2)(5 5))))
+
+;(defun xd (poly)
+;(lcomp poly xd))
+
+;;(print (xd `((4 5))))
+
+(print (macroexpand-1 `(int-diff ((4 6)(2 2)(8 8)(1 1)(4 4)) 
+            r-factor 
+            (lambda (power factor) (/ factor (+ power 1)))
+            r-power
+            (lambda (power factor) (+ power 1))
+            )))
