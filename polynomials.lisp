@@ -190,3 +190,18 @@
 (print (diff-poly '((4 -5)(-6 2)(3 1)(5 0))))
 
 (print (integral-poly '((7 6)(3 4)(1 2)(1 1))))
+
+
+
+(defmacro p (a x^ b &rest values)         
+    (let ((fst (nth 0 values)) 
+    (th (nth 2 values))
+    (rest-val (nthcdr 3 values)))
+    (cond ((null values)   `(list (list ,a ,b)))
+          (T `(list (list ,a ,b) (p ,fst x^ ,th ,@rest-val)  )))
+)    
+)
+(print (p 4 x^ 3 8 x^ 2 9 x^ 3))
+(print (p 4 x^ 3 ))
+
+(print (diff-poly (p 4 x^ 3 )))
