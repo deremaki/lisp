@@ -186,3 +186,76 @@
 ;(add-poly `((3 3)(2 2)(1 1)) (add-poly `((1 5)) `((2 5))))
 ;(add-poly `((3 3)(2 2)(1 1)) (subtract-poly `((1 5)) `((2 5)(-2 2))))(defun mul-poly(poly1 poly2)
 ;(calculate-poly `((3 4)(8 2)(6 0)) 3)
+
+
+
+(defmacro int-diff (poly r-factor fun-factor r-power fun-power)
+  (let ((power (findpower (car poly)))
+        (factor (findfactor (car poly)))
+        (rt (rest poly)))
+    (cond ((null (rest poly))   
+            `(list (list (funcall #',fun-factor (,@power) (,@factor)) 
+                              (funcall #',fun-power  (,@power) (,@factor))))
+            )
+    (T 
+            ;(let ((tmp `(,@power))))e
+            `(cons  (list (funcall #',fun-factor (,@power) (,@factor)) 
+                              (funcall #',fun-power  (,@power) (,@factor)))
+                   (int-diff ,rt r-factor ,fun-factor r-power ,fun-power)
+                ;  (print `(,@power))
+              ;     `(if-let (,@rt) r-factor fun-factor r-power fun-power)
+                   )
+            )
+    )
+    ))
+
+(print   (int-diff ((4 6)(2 2)(8 8)) 
+            r-factor 
+            (lambda (power factor) (/ factor (+ power 1)))
+            r-power
+            (lambda (power factor) (+ power 1))
+            ))
+
+
+(print (macroexpand-1 `(int-diff ((4 6)(2 2)(8 8)(1 1)(4 4)) 
+            r-factor 
+            (lambda (power factor) (/ factor (+ power 1)))
+            r-power
+            (lambda (power factor) (+ power 1))
+            )))
+
+(defun integral-poly(poly)
+     (eval `(int-diff ,poly 
+            r-factor 
+            (lambda (power factor) (/ factor (+ power 1)))
+            r-power
+            (lambda (power factor) (+ power 1))
+            )))  
+            
+(defun diff-poly(poly)
+     (eval `(int-diff ,poly 
+            r-factor 
+            (lambda (power factor) (* factor power))
+            r-power
+            (lambda (power factor) (- power 1))
+            )))        
+            
+
+(print (diff-poly '((4 -5)(-6 2)(3 1)(5 0))))
+
+(print (integral-poly '((7 6)(3 4)(1 2)(1 1))))
+
+
+
+(defmacro p (a x^ b &rest values)         
+    (let ((fst (nth 0 values)) 
+    (th (nth 2 values))
+    (rest-val (nthcdr 3 values)))
+    (cond ((null values)   `(list (list ,a ,b)))
+          (T `(list (list ,a ,b) (p ,fst x^ ,th ,@rest-val)  )))
+)    
+)
+(print (p 4 x^ 3 8 x^ 2 9 x^ 3))
+(print (p 4 x^ 3 ))
+
+(print (diff-poly (p 4 x^ 3 )))
