@@ -1,8 +1,20 @@
-(defun findfactor (term) 
-  (car term))
+(defun findfactor (term)
+  (cond ((listp term)
+          (car term))
+        ((not (listp term))
+          term
+        )
+  )
+  )
 
 (defun findpower (term)
-  (cadr term))
+  (cond ((listp term)
+          (cadr term))
+        ((not (listp term))
+          term
+        )
+  )
+  )
 
 (defun maketerm (factor power)
   (list factor power))
@@ -74,6 +86,48 @@
   ;  (mul-poly poly1 (rest poly2))
     ))
     )
+)
+
+(defun div-poly(poly1 poly2)
+;;division of polynomials with remainder
+;;example usage: (div-poly `((1 3) (-2 2) (-4 0)) `((1 1) (-3 0))) -> ((3 1) (6 2) (0 0))
+  (let (temp `() ))
+  (let (q `() ))
+  (let (r `() ))
+  (setf q `((0 0)) )
+  (setf r poly1)
+  ;;(loop while (and (not (equal r `() )) (>= (degree r) (degree poly2)) ) 
+  (loop :for term in poly1 
+      :do 
+        (setf temp (div-term (lead r) (lead poly2) ))
+        (setf q (add-poly q temp))
+        (setf r (subtract-poly r (mul-poly temp poly2)))
+      :finally (return q)
+    )
+  )
+
+(defun div-term (term1 term2)
+;;simple division of single terms
+;;example usage: (div-term `(4 2) `(2 1)) -> (2 1)
+  (maketerm (/ (findfactor term1) (findfactor term2)) (- (findpower term1) (findpower term2) ))
+)
+
+(defun degree(poly)
+;;returns the degree of polynomial
+;;example usage: (degree `((3 4)(8 2)(6 0))) -> 4
+  (loop
+      :with deg = -1
+      :for term in poly
+      :do (cond ((> (findpower term) deg)
+            (setf deg (findpower term))))
+      :finally (return deg)
+  )
+)
+
+(defun lead(poly)
+;;returns leading term of polynomial
+;;example usage: (term `((3 4)(8 2)(6 0))) -> (3 4)
+  (car poly)
 )
 
 (defun diff-poly(poly)
