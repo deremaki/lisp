@@ -193,12 +193,7 @@
 ;;sample recursive execution
 ;print  (add-poly `((3 3)(2 2)(1 1)) `((3 3)(2 2)(1 1)) ))
 
-;;(print (add-poly `((1 5)) `((2 5))))
-(defmacro eight (a b) 
-  (add-poly a 
-    (add-poly a b)))
 
-;(print (eight '((1 5)) '((2 5))))
 ;(add-poly `((1 5)) `((2 5))))
 
 ;(print (macroexpand-1 '(eight ((1 5)) ((2 5)))))
@@ -212,25 +207,23 @@
 
 
 (defmacro int-diff (poly r-factor fun-factor r-power fun-power)
-  (let ((power (findpower (car poly)))
-        (factor (findfactor (car poly)))
-        (rt (rest poly)))
-    (cond ((null (rest poly))   
-            `(list (list (funcall #',fun-factor (,@power) (,@factor)) 
-                              (funcall #',fun-power  (,@power) (,@factor))))
-            )
-    (T 
-            ;(let ((tmp `(,@power))))e
-            `(cons  (list (funcall #',fun-factor (,@power) (,@factor)) 
-                              (funcall #',fun-power  (,@power) (,@factor)))
-                   (int-diff ,rt r-factor ,fun-factor r-power ,fun-power)
-                ;  (print `(,@power))
-              ;     `(if-let (,@rt) r-factor fun-factor r-power fun-power)
-                   )
-            )
-    )
+  `(let ((power (findpower (car ,poly)))
+        (factor (findfactor (car ,poly)))
+        (rt (rest ,poly)))
+     (cond ((null (rest ,poly))   
+           (list (list (funcall #',fun-factor power factor) 
+                       (funcall #',fun-power power factor)))
+            
+          
+          )
+    (T  (cons  (list (funcall #',fun-factor power factor) 
+                        (funcall #',fun-power  power factor)
+                        ) 
+                  (int-diff rt r-factor ,fun-factor r-power ,fun-power)
+                )
     ))
-
+        
+    ))
 ;; (print   (int-diff ((4 6)(2 2)(8 8)) 
 ;;             r-factor 
 ;;             (lambda (power factor) (/ factor (+ power 1)))
@@ -245,28 +238,6 @@
 ;;             r-power
 ;;             (lambda (power factor) (+ power 1))
 ;;             )))
-
-(defun integral-poly(poly)
-     (eval `(int-diff ,poly 
-            r-factor 
-            (lambda (power factor) (/ factor (+ power 1)))
-            r-power
-            (lambda (power factor) (+ power 1))
-            )))  
-            
-(defun diff-poly(poly)
-     (eval `(int-diff ,poly 
-            r-factor 
-            (lambda (power factor) (* factor power))
-            r-power
-            (lambda (power factor) (- power 1))
-            )))        
-            
-
-;; (print (diff-poly '((4 -5)(-6 2)(3 1)(5 0))))
-
-;; (print (integral-poly '((7 6)(3 4)(1 2)(1 1))))
-
 
 
 (defmacro p (a x^ b &rest values)         
@@ -299,3 +270,39 @@
 ;; (print (p 4 x^ 3 ))
 
 ;; (print (diff-poly (p 4 x^ 3 )))
+
+
+
+(defun integral-poly(poly)
+     (eval `(int-diff ,poly 
+           r-factor 
+          (lambda (power factor) (/ factor (+ power 1)))
+         r-power
+       (lambda (power factor) (+ power 1))
+        )))  
+     
+    
+(defun diff-poly(poly)
+     (eval `(int-diff ,poly 
+            r-factor 
+            (lambda (power factor) (* factor power))
+            r-power
+            (lambda (power factor) (- power 1))
+            )))        
+            
+
+(print (int-diff `((4 6)(2 2)(8 8)(1 1)(4 4))
+             r-factor 
+             (lambda (power factor) (/ factor (+ power 1)))
+             r-power
+             (lambda (power factor) (+ power 1))
+             ))
+(print (power-poly '((3 3)(2 2)(1 1)(4 4)) '(5 2)))
+ (print (diff-poly '(p 4 x^ 3 )))
+ 
+ (print (macroexpand-1 `(p 4 x^ 4)))
+(print (integral-poly ''((7 6)(3 4)(1 2)(1 1))))
+ (print (integral-poly `(power-poly '((3 3)(2 2)(1 1)(4 4)) '(5 2))
+           
+            )
+ )
